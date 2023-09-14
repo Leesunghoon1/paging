@@ -1,0 +1,20 @@
+package dao;
+
+public class MemberDAOImpl implements MemberDAO {
+	
+	private static final Logger log = LoggerFactory.getLogger(MemberDAOImpl.class);
+	private SqlSession sql;
+	private final String NS = "MemberMapper."; //네임스페이스.id
+	
+	public MemberDAOImpl() {
+		new DatabaseBuilder();
+		sql = DatabaseBuilder.getFactory().openSession();
+	}
+
+	@Override
+	public int insert(MemberVO mvo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

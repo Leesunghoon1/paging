@@ -1,0 +1,20 @@
+package service;
+
+import org.slf4j.Logger;
+
+import dao.MemberDAO;
+
+public class MemberServiceImpl implements MemberService {
+	private static final Logger log = LoggerFactory.getLogger(MemberServiceImpl.class);
+	private MemberDAO mdao; 
+	
+	public MemberServiceImpl(){
+		mdao = new MemberDAOImpl();
+	}
+	@Override
+	public int register(MemberService msv) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="MemberMapper">
+    <insert id="add" parameterType="mvo">
+        insert into member (id, pwd, email, age) values(#{id}, #{pwd}, #{email}, #{age})
+     </insert>
+     
+       <select id="login" parameterType="mvo" resultType="mvo">
+        select * from member where id = #{id} and pwd = #{pwd}
+     </select>
+     
+     <update id="logout" parameterType="String">
+        update member set last_login = now() where id = #{id}
+     </update>
+        <select id="list" resultType="mvo">
+        select * from member
+     </select>
+          <update id="update" parameterType="mvo">
+        update member set pwd=#{pwd}, email=#{email}, age=#{age} where id=#{id} 
+     </update>
+      <delete id="remove" parameterType="string">
+        delete from member where id = #{id} 
+     </delete>
+      <select id="cnt" parameterType="pgvo" resultType="int">
+     select count(bno) from board
+     <include refid="search"></include>
+  </select>
+     <!-- select count(bno) from board where  //  -->
+  <sql id="search">
+   <if test="type != null">
+      <trim prefix="where(" suffix=")" prefixOverrides="OR">
+         <foreach collection="typeToArray" item="type">
+            <trim prefix="OR">
+               <choose>
+                  <when test="type == 't'.toString()">
+                     title like concat('%',#{keyword},'%')
+                  </when>
+
+                  <when test="type == 'c'.toString()">
+                     content like concat('%',#{content},'%')
+                  </when>
+
+                  <when test="type == 'w'.toString()">
+                     writer like concat('%',#{writer},'%')
+                  </when>
+               </choose>
+            </trim>
+         </foreach>
+      </trim>
+   </if>
+</sql>
+    </mapper>
+  

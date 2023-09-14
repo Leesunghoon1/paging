@@ -1,0 +1,5 @@
+package Memberservice;
+
+public interface MemberService {
+
+}

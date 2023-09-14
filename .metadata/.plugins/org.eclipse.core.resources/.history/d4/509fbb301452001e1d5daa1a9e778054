@@ -1,0 +1,7 @@
+package service;
+
+import Memberservice.MemberService;
+
+public class MemberServiceImpl implements MemberService {
+
+}

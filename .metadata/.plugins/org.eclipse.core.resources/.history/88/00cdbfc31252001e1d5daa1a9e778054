@@ -1,0 +1,13 @@
+package domain;
+
+public class MemberVO {
+	private String id;
+	private String pw;
+	private String email;
+	int age;
+	private String regdate;
+	private String last_login;
+	
+	
+	public MemberVO() {} //기본 생성자
+}

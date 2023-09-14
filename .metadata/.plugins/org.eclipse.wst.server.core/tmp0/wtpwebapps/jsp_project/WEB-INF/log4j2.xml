@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+
+<Appenders> <!-- //로그가 출력되는 위치를 설정 -->
+	<Console name="Console" target="SYSTEM_OUT">
+		<PatternLayout pattern="%d - %msg%n" />
+	</Console>
+</Appenders>
+<Loggers>
+	<Root level="INFO"> 
+		<AppenderRef ref="Console" /> <!-- // 경로 -->
+	</Root>
+</Loggers>
+
+</Configuration>

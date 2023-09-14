@@ -1,0 +1,18 @@
+package dao;
+
+import domain.BoardVO;
+
+public class BoardDAOImpl implements BoardDAO {
+	
+	   private static final Logger log = LoggerFactory.getLogger(BoardDAOImpl.class);
+	   //DB 연결
+	   private SqlSession sql;
+	   private final String NS = "BoardMapper."; // NS = NameSpace.id 인식
+	   
+	   
+	@Override
+	public int insert(BoardVO bvo) {
+		
+	}
+
+}
