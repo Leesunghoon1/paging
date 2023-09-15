@@ -1,0 +1,42 @@
+// 댓글 등록시 bno, writer , content
+
+document.getElementById('cmtAddBtn').addEventListener('click',()=>{
+    const cmtText = document.getElementById('cmtText').value;
+    console.log(cmtText);
+    if(cmtText == null || cmtText == ""){
+        alert("댓글을 입력해주세요");
+        return false; // 메서드 종료
+    }else{
+        let cmtDate = {
+            bno: bnoVal,
+            writer: document.getElementById('cmtWriter').value,
+            content: cmtText
+        };
+        //전송 function 호출
+        postCommentToServer(cmtDate).then(result => {
+            if(result > 0){
+                alert("댓글 등록 성공");
+            }else{
+                alert("댓글 등록 실패");
+            }
+        });
+    }
+})
+
+async function postCommentToServer(cmtDate){
+    try {
+        const url = "/cmt/post";
+        const config ={ // 서버를 데이터로 보낼때 config써야됨 
+            method: 'post', 
+            headers: {
+                'Content-Type':'application/json; charset=utf-8'
+            },
+            body: JSON.stringify(cmtDate)
+        };
+        const resp = await fetch(url, config);
+        const result = await resp.text(); // 0 or 1 (isOk)
+        return result;
+    } catch (error) {
+        console.log(error);
+    }
+}

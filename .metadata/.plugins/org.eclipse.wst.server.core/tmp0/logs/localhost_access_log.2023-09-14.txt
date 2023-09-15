@@ -530,3 +530,10 @@
 0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:11:55 +0900] "GET / HTTP/1.1" 200 797
 0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:11:57 +0900] "GET /brd/pageList HTTP/1.1" 200 4229
 0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:12:00 +0900] "GET /brd/pageList?type=w&keyword=222&pageNo=1&qty=10 HTTP/1.1" 200 1625
+127.0.0.1 - - [14/Sep/2023:21:13:23 +0900] "GET / HTTP/1.1" 200 797
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:13:23 +0900] "GET / HTTP/1.1" 200 797
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:13:24 +0900] "GET /brd/pageList HTTP/1.1" 200 4229
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:13:27 +0900] "GET /brd/pageList?type=w&keyword=222&pageNo=1&qty=10 HTTP/1.1" 200 1552
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:13:38 +0900] "GET /brd/pageList?type=t&keyword=222&pageNo=1&qty=10 HTTP/1.1" 200 4256
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:13:47 +0900] "GET /brd/pageList?type=w&keyword=11&pageNo=1&qty=10 HTTP/1.1" 200 4264
+0:0:0:0:0:0:0:1 - - [14/Sep/2023:21:13:58 +0900] "GET /brd/pageList?type=c&keyword=2&pageNo=1&qty=10 HTTP/1.1" 200 4252
