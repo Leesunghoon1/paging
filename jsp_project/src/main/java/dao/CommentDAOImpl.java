@@ -59,6 +59,16 @@ public class CommentDAOImpl implements CommentDAO {
 	}
 
 
+	@Override
+	public int delete2(int bno) {
+		isOK = sql.delete(NS + "delete", bno);
+		if(isOK>0) {
+			sql.commit();
+		}
+		return isOK;
+	}
+
+
 	
 	//메서드 시작~
 }

@@ -19,6 +19,8 @@ import domain.PagingVO;
 import handler.PagingHandler;
 import service.BoardService;
 import service.BoardServiceImpl;
+import service.CommentService;
+import service.CommentServiceImpl;
 
 @WebServlet("/brd/*")
 public class BoardController extends HttpServlet {
@@ -33,10 +35,14 @@ public class BoardController extends HttpServlet {
 	private int isOK; //DB의 구문 체크 값 저장
 	//controller <-> service, service <-> dao
 	private BoardService bsv; //아직 미구현 상태 (service -> interface로 생성)
+	
+	private CommentService csv;
+	
+	
    
     public BoardController() {
     	bsv = new BoardServiceImpl(); // bsv를 구현할 실제 구현객체(service => class로 생성)
-
+    	csv = new CommentServiceImpl();
     }
 
 
@@ -184,6 +190,7 @@ public class BoardController extends HttpServlet {
 		case "remove" :
 			try {
 				int bno = Integer.parseInt(request.getParameter("bno"));
+				isOK = csv.remove2(bno);
 				isOK = bsv.remove(bno);
 				log.info("들어갔냐 ?");
 				log.info((isOK>0)? "OK" : "FAIL");

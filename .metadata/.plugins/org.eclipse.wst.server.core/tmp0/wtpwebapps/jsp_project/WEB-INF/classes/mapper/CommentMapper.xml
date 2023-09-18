@@ -16,6 +16,10 @@
   	<delete id="del" parameterType="int">
      delete from comment where cno = #{cno}
      </delete>
+     <delete id="delete" parameterType="int">
+     delete from comment where bno = #{bno}
+     </delete>
+     
   </mapper>
   
   

@@ -38,6 +38,12 @@ public class CommentServiceImpl implements CommentService {
 		// TODO Auto-generated method stub
 		return cdao.delete(cno);
 	}
+
+	@Override
+	public int remove2(int bno) {
+		// TODO Auto-generated method stub
+		return cdao.delete2(bno);
+	}
 	
 	//메서드 구현
 }
