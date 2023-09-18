@@ -77,4 +77,7 @@ const bnoVal = `<c:out value="${bvo.bno}" />`;
 
 <script src="/resources/board_detail.js"></script>
 </body>
+<script type="text/javascript">
+printCommentList(bnoVal);
+</script>
 </html>
