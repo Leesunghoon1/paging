@@ -8,6 +8,7 @@
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="&#x09;&#x09;&#x09;case &quot;list&quot; :"/>
 			<item value="accordionExample"/>
 			<item value="wri"/>
 			<item value="page"/>

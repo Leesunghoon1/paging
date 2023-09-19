@@ -46,6 +46,9 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public int remove(int bno) {
+		// comment의 댓글 먼저 지우고 본 게시글 삭제
+		// CommentServiceImpl scv = new CommentServiceImpl();
+		// int isOK = csv.deleteAll(bno);
 		log.info("delete check 2");
 		return bdao.remove(bno);
 	}

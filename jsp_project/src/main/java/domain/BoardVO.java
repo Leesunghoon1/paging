@@ -17,6 +17,7 @@ public class BoardVO {
 	private String regdate;
 	private String moddate;
 	private int count;
+	private String image_File;
 	
 	
 	
@@ -57,7 +58,8 @@ public class BoardVO {
 	}
 	
 	
-	public BoardVO(int bno, String title, String writer, String content, String regdate, String moddate, int count) {
+	public BoardVO(int bno, String title, String writer, String content, 
+			String regdate, String moddate, int count, String image_File) {
 		super();
 		this.bno = bno;
 		this.title = title;
@@ -66,6 +68,16 @@ public class BoardVO {
 		this.regdate = regdate;
 		this.moddate = moddate;
 		this.count = count;
+		this.image_File = image_File;
+	}
+
+	
+	public String getImage_File() {
+		return image_File;
+	}
+
+	public void setImage_File(String image_File) {
+		this.image_File = image_File;
 	}
 
 	public int getBno() {
@@ -116,11 +128,6 @@ public class BoardVO {
 		this.moddate = moddate;
 	}
 
-	@Override
-	public String toString() {
-		return "BoardVO [bno=" + bno + ", title=" + title + ", writer=" + writer + ", content=" + content + ", regdate="
-				+ regdate + ", moddate=" + moddate + "]";
-	}
 
 	public int getCount() {
 		return count;
@@ -128,6 +135,12 @@ public class BoardVO {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	@Override
+	public String toString() {
+		return "BoardVO [bno=" + bno + ", title=" + title + ", writer=" + writer + ", content=" + content + ", regdate="
+				+ regdate + ", moddate=" + moddate + ", count=" + count + ", image_File=" + image_File + "]";
 	}
 	
 	

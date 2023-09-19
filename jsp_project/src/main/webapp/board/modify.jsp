@@ -10,7 +10,7 @@
 <h1>Board modfiy Page</h1>
 
  
-<form action="/brd/edit" method="post">
+<form action="/brd/edit" method="post" enctype="multipart/form-data">
 <table border="1">
 	<tr>
 		<th>BNO</th>
@@ -33,6 +33,14 @@
 		<th>CONTENT</th>
 		<td><textarea rows="3" cols="30" name="content">${bvo.content }</textarea></td>	
 	</tr>
+	<tr>
+		<th>IMAGE_FILE</th>
+		<td>
+		<input type="hidden" name="image_file" value="${bvo.image_File }">
+		<input type="file" name="new_file" accept="image/png, image/jpg, image/gif">
+		</td>
+	</tr>
+	
 </table>
 <button type="submit">수정</button>
 </form>

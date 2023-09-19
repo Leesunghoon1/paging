@@ -11,6 +11,11 @@
 </head>
 <body>
 <h1>Board Detail Page</h1>
+<c:if test="${bvo.image_File ne '' && bvo.image_File ne null}">
+<div>
+<img src="/_fileUpload/${bvo.image_File}" alt="No Image ">
+</div>
+</c:if>
 <table border="1">
 	<tr>
 		<th>BNO</th>
@@ -38,7 +43,6 @@
 	</tr>
 
 </table>
-
 <a href="/brd/modify?bno=${bvo.bno }"><button type="button">modify</button></a>
 <a href="/brd/remove?bno=${bvo.bno }"><button type="button">remove</button></a>
 <a href="/brd/pageList?bno=${bvo.bno }"><button type="button">list</button></a>

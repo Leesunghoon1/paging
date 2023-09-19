@@ -8,8 +8,8 @@
   <!-- paramiterType(매게변수로 가져온 객체), resultType(내보내는 결과 객체) -->
   
   <insert id="add" parameterType="bvo"> <!-- bvo처럼 약어로 지정했을떄 사용가능  -->
-  insert into board(title, writer, content)
-  values(#{title}, #{writer}, #{content})
+  insert into board(title, writer, content, image_File)
+  values(#{title}, #{writer}, #{content}, #{image_File})
   </insert>
   <select id="list" resultType="bvo">
      select * from board order by bno desc
@@ -19,7 +19,7 @@
   </select>
   <select id="up" parameterType="bvo">
   update board set title = #{title}, content = #{content},
-  moddate = now()
+  moddate = now(), image_File= #{image_File}
   where bno = #{bno}
   </select>
      <delete id="delete" parameterType="int">

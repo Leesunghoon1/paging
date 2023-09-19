@@ -8,10 +8,12 @@
 </head>
 <body>
 <h1>Board Register Page</h1>
-<form action="/brd/insert" method="post">
+<form action="/brd/insert" method="post" enctype="multipart/form-data">
 	title: <input type="text" name="title"><br>
 	writer: <input type="text" name="writer"><br>
 	content: <textarea row="3" cols="30" name="content"></textarea><br>
+	image_file: <input type="file" name="image_file" 
+	accept="image/png, image/jpg, image/jpeg, image/gif"><br> <!--accept 경로 -->
 	<button type="submit">등록</button>
 </form>
 </body>

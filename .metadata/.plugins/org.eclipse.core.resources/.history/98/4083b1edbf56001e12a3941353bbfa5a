@@ -9,13 +9,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import domain.BoardVO;
+import domain.PagingVO;
+import handler.PagingHandler;
 import service.BoardService;
 import service.BoardServiceImpl;
+import service.CommentService;
+import service.CommentServiceImpl;
 
 @WebServlet("/brd/*")
 public class BoardController extends HttpServlet {
@@ -30,10 +35,14 @@ public class BoardController extends HttpServlet {
 	private int isOK; //DB의 구문 체크 값 저장
 	//controller <-> service, service <-> dao
 	private BoardService bsv; //아직 미구현 상태 (service -> interface로 생성)
+	
+	private CommentService csv;
+	
+	
    
     public BoardController() {
     	bsv = new BoardServiceImpl(); // bsv를 구현할 실제 구현객체(service => class로 생성)
-
+    	csv = new CommentServiceImpl();
     }
 
 
@@ -45,10 +54,10 @@ public class BoardController extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 		
 		String uri = request.getRequestURI(); //jsp에서 오는 요청 주소
-		log.info("uri >>>>>>" + uri); //뒤에 오는 주소 받기위한 설정
+		log.info("uri >>>>>1>" + uri); //뒤에 오는 주소 받기위한 설정
 		
 		String path = uri.substring(uri.lastIndexOf("/")+1); //뒤에 주소만 뽑기
-		log.info("주소 확인" + path);
+		log.info("주소 확인 " + path);
 		
 		switch(path) {
 		case "register" :
@@ -91,21 +100,106 @@ public class BoardController extends HttpServlet {
 			}
 			break;
 			
+		case "pageList" :
+			try {
+				//jsp 에서 파라미터 받기
+				log.info("pageList시작");
+				PagingVO pgvo = new PagingVO(); // 1, 10
+				if(request.getParameter("pageNo") != null) {
+					log.info("pageList1");
+					int pageNo = Integer.parseInt((request.getParameter("pageNo")));
+					int qty = Integer.parseInt(request.getParameter("qty"));
+					log.info("pageNo" + pageNo + "qty" +qty);
+					pgvo = new PagingVO(pageNo, qty);
+				}
+				//검색어 받기
+				log.info("pageList2");
+				String type = request.getParameter("type");
+				String keyword = request.getParameter("keyword");
+				pgvo.setType(type);
+				pgvo.setKeyword(keyword);
+				log.info("type  " + pgvo.getType() + "  keyword  " + pgvo.getKeyword());
+				//pagingVO, totalCount
+				int totalCount = bsv.getTotalCount(pgvo);
+				log.info("전체 게시글 수 " + totalCount);
+				// bsv pgvo 주고 limit 적용한 리스트 10개 가져오기
+				List<BoardVO> list = bsv.getPageList(pgvo);
+				log.info("pageList3");
+				request.setAttribute("list", list);
+				PagingHandler ph = new PagingHandler(pgvo, totalCount);
+				request.setAttribute("ph", ph);
+				log.info("paging 성공~");
+				destPage = "/board/list.jsp";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			break;
+			
 		case "detail" :
 			try {
 				//jsp에서 보낸 bno 받기
 				int bno = Integer.parseInt(request.getParameter("bno"));
 				log.info("detail cheack 1");
+				isOK = bsv.count(bno);
 				BoardVO bvo = bsv.getDetail(bno);
 				log.info("bvo>>>>>>>>>>>" + bvo);
+				
 				request.setAttribute("bvo", bvo);
 				destPage = "/board/detail.jsp"; // 보내는 구문
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.info("detail 에러");
 			}
+			break;
+			
+		case "modify" :
+			try {
+				int bno = Integer.parseInt(request.getParameter("bno"));
+				log.info("modify cheack 1");
+				BoardVO bvo = bsv.getDetail(bno);
+				log.info("bvo>>>>>>>>>>>" + bvo);
+				request.setAttribute("bvo", bvo);
+				destPage = "/board/modify.jsp";
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.info("modify 에러");
+			}
+			break;
+			
+		case "edit" :
+			try {
+				int bno = Integer.parseInt(request.getParameter("bno"));
+				String title = request.getParameter("title");
+				String content = request.getParameter("content");
+				log.info("edit cheack 1");
+				BoardVO bvo = new BoardVO(bno, title, content);
+				log.info("bvo>>>" + bvo);
+				isOK = bsv.modify(bvo);
+				log.info((isOK > 0)? "OK" : "FAIL");
+//				destPage = "list?bno="+bno;
+				destPage = "list";
+				log.info("들어갔냐 ?");
+				
+				
+			} catch (Exception e) {
+			 e.printStackTrace();
+			 log.info("edit error");
+			}
+			break;
+			
+		case "remove" :
+			try {
+				int bno = Integer.parseInt(request.getParameter("bno"));
+				isOK = csv.remove2(bno);
+				isOK = bsv.remove(bno);
+				log.info("들어갔냐 ?");
+				log.info((isOK>0)? "OK" : "FAIL");
+				destPage="pageList"; //내부 case로 이동
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			break;
 		}
-		
 		//목적지 데이터 경로로 전달해주는 객체(requestDispatcher)
 				rdp = request.getRequestDispatcher(destPage);
 				rdp.forward(request, response); //요청에 필요한 객체를 가지고, 경로로 이동.

@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,12 +12,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import domain.BoardVO;
 import domain.PagingVO;
+import handler.FileHandler;
 import handler.PagingHandler;
+import net.coobird.thumbnailator.Thumbnailator;
+import net.coobird.thumbnailator.Thumbnails;
 import service.BoardService;
 import service.BoardServiceImpl;
 import service.CommentService;
@@ -35,8 +42,8 @@ public class BoardController extends HttpServlet {
 	private int isOK; //DB의 구문 체크 값 저장
 	//controller <-> service, service <-> dao
 	private BoardService bsv; //아직 미구현 상태 (service -> interface로 생성)
-	
 	private CommentService csv;
+	private String savePath; //파일 경로를 저장할 변수
 	
 	
    
@@ -65,22 +72,97 @@ public class BoardController extends HttpServlet {
 			destPage = "/board/register.jsp"; //목적지 주소 설정
 			log.info("이동완료");
 			break;
+//		case "insert" :
+//			try {
+//				//jsp에서 데이터를 입력 후 -> 전송
+//				//데이터를 db에 등록 한 후 -> index.jsp로 이동
+//				String title = request.getParameter("title"); //모든 데이터가 String으로 변환 후 가져옴
+//				String writer = request.getParameter("writer"); //모든 데이터가 String으로 변환 후 가져옴
+//				String content = request.getParameter("content"); //모든 데이터가 String으로 변환 후 가져옴
+//				log.info("insert check 1");
+//				BoardVO bvo = new BoardVO(title, writer, content);
+//				log.info("bvo>>>>>>>>" + bvo);
+//				isOK = bsv.register(bvo);
+//				log.info((isOK>0)? "ok" : "fals");
+//				//목적지 주소 설정
+//				destPage = "/index.jsp";
+//			} catch (Exception e) {
+//				log.info("insert error~!!");
+//				e.printStackTrace();
+//			}
+//			break;
 		case "insert" :
 			try {
-				//jsp에서 데이터를 입력 후 -> 전송
-				//데이터를 db에 등록 한 후 -> index.jsp로 이동
-				String title = request.getParameter("title"); //모든 데이터가 String으로 변환 후 가져옴
-				String writer = request.getParameter("writer"); //모든 데이터가 String으로 변환 후 가져옴
-				String content = request.getParameter("content"); //모든 데이터가 String으로 변환 후 가져옴
-				log.info("insert check 1");
-				BoardVO bvo = new BoardVO(title, writer, content);
-				log.info("bvo>>>>>>>>" + bvo);
+				//파일을 업로드할 경로 설정(업로드 할때 설정)
+				savePath = getServletContext().getRealPath("/_fileUpload"); //서버가 들어있는 설정정보 를 저장하고 있는곳
+				File fileDir = new File(savePath);
+				log.info("파일 자장 위치 : " + savePath);
+				
+				
+				//파일 객체를 생성하기 위한 객체(파일에 대한 정보를 설정)
+				DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+				
+				fileItemFactory.setRepository(fileDir); //저장할 위치 설정 set (file객체로 생성 후 넣어야됨)
+				
+				fileItemFactory.setSizeThreshold(2*1024*1024); //파일을 받을때 임시메모리 용량 설정 : byte단위
+				
+				BoardVO bvo = new BoardVO();
+				
+				//multipart/form-data 형식으로 넘어온 request 객체를 다루기 쉽게 변환해주는 객체형식으로 저장
+				ServletFileUpload fileUpload = new ServletFileUpload(fileItemFactory);
+				
+				List<FileItem> itemList = fileUpload.parseRequest(request);
+				
+				//DB로 넘기기 위한 BoardVO 객체로 변환. 이미지는 저장
+				for(FileItem item : itemList) {
+					switch(item.getFieldName()) {
+					case "title":
+						bvo.setTitle(item.getString("utf-8")); //인코딩 형식을 담아서 변환
+						break;
+					case "writer":
+						bvo.setWriter(item.getString("utf-8"));
+						break;
+					case "content":
+						bvo.setContent(item.getString("utf-8"));
+						break;
+					case "image_file":
+						//이미지 저장 처리가 필요
+						//이미지가 필수x 없는 경우에도 처리
+						//이미지가 있는지 체크
+						if(item.getSize()>0) { //이미지는 데이터 크기로 비교해야함
+							 //경로를 포함해서 들어오는 케이스가 있음
+							String fileName = item.getName()
+									.substring(item.getName().lastIndexOf("/")+1); // 파일 이름만 가져오려는 방법
+						//시스템의 현재 시간_파일이름.jpg
+						fileName = System.currentTimeMillis()+"_"+fileName;
+						
+						//파일 객체 생성 : D : ~ /fileUpload(원래경로)/시간_cat2.jpg 
+						File uploadFilePath = new File(fileDir+File.separator+fileName);
+						log.info("파일경로 + 이름 : " + uploadFilePath);
+						
+						//저장
+						try {
+							item.write(uploadFilePath); //자바 객체를 디스크에 쓰기
+							bvo.setImage_File(fileName); //파일 이름만 넣기
+							
+							//썸네일 작업 : 트래픽 과다사용 방지
+							Thumbnails.of(uploadFilePath).size(60, 60)
+							.toFile(new File(fileDir+File.separator+"_th_"+fileName));
+							
+						} catch (Exception e) {
+							log.info(">>>>> file writer on disk error");
+							e.printStackTrace();
+						}
+						
+						}
+						break;
+					}
+				}
+				//DB에 bvo 저장용청
 				isOK = bsv.register(bvo);
-				log.info((isOK>0)? "ok" : "fals");
-				//목적지 주소 설정
-				destPage = "/index.jsp";
+				log.info("insert >>>"+(isOK>0? "ok" : "fail"));
+				destPage="pageList";
 			} catch (Exception e) {
-				log.info("insert error~!!");
 				e.printStackTrace();
 			}
 			break;
@@ -168,17 +250,97 @@ public class BoardController extends HttpServlet {
 			
 		case "edit" :
 			try {
-				int bno = Integer.parseInt(request.getParameter("bno"));
-				String title = request.getParameter("title");
-				String content = request.getParameter("content");
-				log.info("edit cheack 1");
-				BoardVO bvo = new BoardVO(bno, title, content);
-				log.info("bvo>>>" + bvo);
+				//파일 저장 경로 설정
+				savePath = getServletContext().getRealPath("/_fileUpload");
+				File fileDir = new File(savePath);
+				
+				//디스크에 기록할 파일 정보를 setting 하는 객체
+				DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
+				
+				fileItemFactory.setRepository(fileDir); //저장 경로 설정
+				fileItemFactory.setSizeThreshold(2*1024*1024); // 임시저장 용량 설정
+				
+				BoardVO bvo = new BoardVO(); //저장객체
+				
+				ServletFileUpload fileUpload = new ServletFileUpload(fileItemFactory);
+				log.info(">> update 준비 >>");
+				
+				List<FileItem> itemList = fileUpload.parseRequest(request);
+				
+				String old_file = null; //수정하기 전 파일이 있는지 없는지 확인
+				
+				for(FileItem item : itemList) {
+					switch(item.getFieldName()) {
+						case "bno" :
+							bvo.setBno(Integer.parseInt(item.getString("utf-8")));
+							break;
+						case "title" :
+							bvo.setTitle(item.getString("utf-8"));
+							break;
+						case "content" :
+							bvo.setContent(item.getString("utf-8"));
+							break;
+						case "image_file" :
+							//수정 이전 파일 
+							old_file = item.getString("utf-8");
+							break;
+						case "new_file" :
+							//새로운 파일이 있는지 확인
+							if(item.getSize()>0) {
+								if(old_file != null) {
+									//기존파일을 삭제 해야함(기존 파일이 있을경우)									
+									FileHandler fileHandler = new FileHandler();
+									isOK = fileHandler.deleteFile(old_file, savePath);
+								}
+								//NEW 파일의 경로와 파일명 생성
+								String fileName = item.getName().substring(
+										item.getName().lastIndexOf(File.separator)+1);
+								
+								log.info("new_fileName" + fileName);
+								
+								//실제 저장될 파일이름
+								fileName = System.currentTimeMillis()+"_"+fileName;
+								
+								File uploadFilePath = new File(fileDir+File.separator+fileName);
+								//저장
+								try {
+									item.write(uploadFilePath);
+									bvo.setImage_File(fileName);
+									
+									//썸네일 작업
+									Thumbnails.of(uploadFilePath)
+									.size(60, 60)
+									.toFile(new File(fileDir+File.separator+"_th_"+fileName));
+									
+								} catch (Exception e) {
+									log.info("new File save error");
+									e.printStackTrace();
+								}
+							}else { //새로운 파일이 없다면... 기존 파일을 다시 담기
+								bvo.setImage_File(old_file);
+							}
+							
+							break;
+							
+					}
+				}
 				isOK = bsv.modify(bvo);
 				log.info((isOK > 0)? "OK" : "FAIL");
-//				destPage = "list?bno="+bno;
-				destPage = "list";
-				log.info("들어갔냐 ?");
+				destPage = "pageList";
+						
+				
+				
+//				int bno = Integer.parseInt(request.getParameter("bno"));
+//				String title = request.getParameter("title");
+//				String content = request.getParameter("content");
+//				log.info("edit cheack 1");
+//				BoardVO bvo = new BoardVO(bno, title, content);
+//				log.info("bvo>>>" + bvo);
+//				isOK = bsv.modify(bvo);
+//				log.info((isOK > 0)? "OK" : "FAIL");
+////				destPage = "list?bno="+bno;
+//				destPage = "list";
+//				log.info("들어갔냐 ?");
 				
 				
 			} catch (Exception e) {
