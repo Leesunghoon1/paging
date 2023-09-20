@@ -16,6 +16,7 @@
        <form action="/brd/pageList" method="get">
           <div>
           <c:set value="${ph.pgvo.type }" var="typed"></c:set>
+          				<!-- pgvo.type을 계속 표현되게끔 넣어줌 -->
              <select name="type">
                 <option ${typed == null? 'selected':''}>Choose..</option>
                 <option value="t"  ${typed eq 't'? 'selected':''}>title</option>
@@ -30,6 +31,7 @@
              <input type="hidden" name="pageNo" value="${ph.pgvo.pageNo }">
              <input type="hidden" name="qty" value="${ph.pgvo.qty }">
              ${ph.totalCount }
+             <!-- 전체 개수 표현되게끔 -->
              <button type="submit">Search</button>
           </div>
           
@@ -59,22 +61,27 @@
 </tr>
 </c:forEach>
 </table>
+
 <!-- 페이지네이션 표시 구역 -->
    <div>
       <!-- prev -->
       <c:if test="${ph.prev }">
          <a href="/brd/pageList?pageNo=${ph.startPage-1 }&qty=${ph.pgvo.qty}&type=${ph.pgvo.type}&keyword=${ph.pgvo.keyword}"> ◁ | </a>
+ 									<!-- 방금 누른 페이지의 -1로 넘어가기  타입에 ${ph.pgvo.type} 넣어줘야 계속 유지가능 -->
       </c:if>
+      <!-- 이전 페이지  -->
       
-      <c:forEach begin="${ph.startPage }" end="${ph.endPage }" var="i"> 
+      <c:forEach begin="${ph.startPage }" end="${ph.endPage }" var="i"> <!-- 시작 페이지부터 끝 페이지를 var="i"에 넣겠다 그리고 i를 표현하겠다 -->
           <a href="/brd/pageList?pageNo=${i }&qty=${ph.pgvo.qty}&type=${ph.pgvo.type}&keyword=${ph.pgvo.keyword}">${i } </a>
+      <!--현재 페이지No는 i -->  
       </c:forEach>
       
       <!-- next -->
       <c:if test="${ph.next }">
          <a href="/brd/pageList?pageNo=${ph.endPage+1 }&qty=${ph.pgvo.qty}&type=${ph.pgvo.type}&keyword=${ph.pgvo.keyword}"> | ▷ </a>
+         								<!-- 방금 누른 페이지의 +1로 넘어가기  -->
       </c:if>
-      
+      <!-- 다음 페이지 -->
    </div>
    
    <a href="/index.jsp">Index</a>

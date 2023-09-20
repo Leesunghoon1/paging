@@ -49,6 +49,9 @@ public class BoardServiceImpl implements BoardService {
 		// comment의 댓글 먼저 지우고 본 게시글 삭제
 		// CommentServiceImpl scv = new CommentServiceImpl();
 		// int isOK = csv.deleteAll(bno);
+		// int cnt = scv.commnetCount(bno);
+		// if(cnt>0) {
+		
 		log.info("delete check 2");
 		return bdao.remove(bno);
 	}
@@ -71,6 +74,12 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardVO> getPageList(PagingVO pgvo) {
 		log.info("getPageList check 2");
 		return bdao.getPageList(pgvo);
+	}
+
+	@Override
+	public String getFileName(int bno) {
+		log.info("getFileName check 2");
+		return bdao.getFileName(bno);
 	}
 
 

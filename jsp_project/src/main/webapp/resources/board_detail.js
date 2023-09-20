@@ -8,6 +8,7 @@ document.getElementById('cmtAddBtn').addEventListener('click', () => {
 		return false; // 메서드 종료
 	} else {
 		let cmtDate = {
+			//저장할 객체 생성
 			bno: bnoVal,
 			writer: document.getElementById('cmtWriter').value,
 			content: cmtText
@@ -18,6 +19,7 @@ document.getElementById('cmtAddBtn').addEventListener('click', () => {
 
 		//전송 function 호출
 		postCommentToServer(cmtDate).then(result => {
+			
 			if (result > 0) {
 				alert("댓글 등록 성공");
 			} else {
@@ -29,7 +31,7 @@ document.getElementById('cmtAddBtn').addEventListener('click', () => {
 })
 
 
-
+// 전송을 위한 function
 async function postCommentToServer(cmtDate) {
 	try {
 		const url = "/cmt/post";
@@ -37,12 +39,16 @@ async function postCommentToServer(cmtDate) {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/json; charset=utf-8'
+				//들고가는 타입
 			},
 			body: JSON.stringify(cmtDate)
+			//변환
 		};
 		
 		const resp = await fetch(url, config);
+		//받는 객체
 		const result = await resp.text(); // 0 or 1 (isOk)
+								  //해당하는 text만 건져서 보내주기
 		
 		return result;
 	} catch (error) {
@@ -71,6 +77,7 @@ async function spreadCommentList(result) //result 댓글 list
 		str += `<div class="accordion-body">`;
 		str += `<input type="text" class="form-control" id="cmtText" value="${result[i].content}">`
 		str += `<button type="button" class="btn btn-outline-warning cmtModBtn" data-cno="${result[i].cno}" data-writer="${result[i].writer}">%</button>`;
+																						//데이터셋 data-cno="${result[i].cno}"
 		str += `<button type="button" class="btn btn-outline-danger cmtDelBtn" data-cno="${result[i].cno}">X</button>`;
 		str += `</div> </div> </div>`;
 		div.innerHTML += str; //누적해서 담기
@@ -82,13 +89,18 @@ document.addEventListener('click', (e) =>{
 	console.log(e.target);
 	if(e.target.classList.contains('cmtModBtn')){
 		let cno = e.target.dataset.cno;
+		//데이터 셋 가져오기
 		console.log(cno);
 		
 		//수정 구현 (수정할 데이터를 객체로 생성 -> 컨트롤러에서 수정 요청)
-		let div = e.target.closest('div'); // 타겟을 기준으로 가장 가까운 div를 찾아라	
+		let div = e.target.closest('div'); 
+		// 타겟을 기준으로 가장 가까운 div를 찾아라	
+
 		let cmtText = div.querySelector('#cmtText').value;
+		//세트를 찾아주세요
 		let writer = e.target.dataset.writer;
-		
+		//세트를 찾아서 가져오세요
+
 		//비동기통신 함수 호출 -> 처리
 		updateCommentFromServer(cno, writer, cmtText).then(result=>{
 			if(result > 0) {

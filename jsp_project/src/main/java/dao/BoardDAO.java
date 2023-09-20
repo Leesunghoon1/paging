@@ -23,4 +23,7 @@ public interface BoardDAO {
 	int count(int bno);
 
 	List<BoardVO> getPageList(PagingVO pgvo);
+
+	String getFileName(int bno);
+	
 }

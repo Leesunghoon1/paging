@@ -1,6 +1,21 @@
 package domain;
 
-public class PagingVO {
+
+// VO,  DTO => 컨트롤러 -> DB로 데이터를 전송하는 목적으로 쓰임
+// DB에 저장학 객체를 생성하는 목적으로 만들어주는 클래스
+// 저장한 객체를 가져와 화면에 뿌릴때도 사용
+// DB와 상관없이 화면에서 조작해야 하는 값이 필요하다면 Handler를 사용
+// Handler는 DB와 상관없이 화면을 조정
+
+// 페이징 DB구문 ((시작숫자(0, 10, 20, ,고정숫자(10개)))
+// select * from board order by bno desc limit (0,10);
+// select * from board order by bno desc limit (10,10);
+// select * from board order by bno desc limit (20,10);
+
+
+
+public class PagingVO { // DB에 데이터를 뿌려주기 위함
+	
 	
 	private int pageNo; //현재 화면에 출력되는 페이지네이션 번호
 	private int qty; //한 페이지당 보여줄 게시글 수
@@ -10,23 +25,24 @@ public class PagingVO {
 	private String keyword;//검색어
 	
 	public PagingVO() { //페이지네이션을 클릭하기 전 기본리스트 출력값
-		this(1,10);
+		this(1,10); //(시작숫자((1), (11), (21), ,고정숫자(10개))
 	}
 	
-	public PagingVO(int pageNo, int qty) {
+	public PagingVO(int pageNo, int qty) { //클릭하면 설정되는 값
 		this.pageNo = pageNo;
 		this.qty = qty;
 	}
 	
-	public int getPageStart() {
-		return (pageNo-1)*qty; 
+	public int getPageStart() { //기본은 10개지만 화면에서 5개씩, 10개씩, 15개씩 변경할수 있기 때문
+		return (pageNo-1)*qty; //DB에서 조회할 시작 페이지 구하기 
 	}
 	
-	//type이 여러개 들어올때 값을 배열로 리턴
-	public String[] getTypeToArray() {
+
+	public String[] getTypeToArray() {//type이 여러개 들어올때 값을 배열로 리턴
 		return(this.type == null) ? new String[] {} : this.type.split("");
 	}
 	
+	//DB는 겟,셋으로만 접근 가능 맴버변수가 private 이기때문
 	public String getType() {
 		return type;
 	}

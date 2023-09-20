@@ -9,12 +9,13 @@
 </head>
 <body>
 	<h1>My JSP Project</h1>
-
+	<c:if test="${ses.id eq null }">
 	<form action="/mem/login" method="post">
 		ID : <input type="text" name="id"> PW : <input type="text"
 			name="pwd">
-		<button type="submit">>로그인</button>
+	<button type="submit">>로그인</button>
 	</form>
+	</c:if>
 	<br>
 	<div>
 		<c:if test="${ses.id ne null }">

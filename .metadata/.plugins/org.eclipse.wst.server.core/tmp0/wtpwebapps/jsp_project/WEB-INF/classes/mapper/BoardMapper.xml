@@ -22,6 +22,12 @@
   moddate = now(), image_File= #{image_File}
   where bno = #{bno}
   </select>
+  
+  
+  <select id="fileName" parameterType="int" resultType="String">
+  select image_FIle from board where bno = #{bno}
+  </select>
+  
      <delete id="delete" parameterType="int">
      delete from board where bno = #{bno}
      </delete>
@@ -34,17 +40,21 @@
      <include refid="search"></include>
      </select>
       <select id="page" parameterType="pgvo" resultType="bvo">
-     select * from board
+     select * from board where bno >0
      <include refid="search"></include>
+     <!-- 쓸때마다 search로 가져오기  -->
       order by bno desc
      limit #{pageStart}, #{qty}
   </select>
   	  <!-- select count(bno) from board where  //  -->
   <sql id="search">
+  	<!-- 자주 쓰니 id로search를 지정  -->
    <if test="type != null">
-      <trim prefix="where"  prefixOverrides="OR">
+      <trim prefix="and(" suffix=")"  prefixOverrides="OR">
+      							<!-- prefixOverrides="OR" 제일 앞에 나오는 OR만 없애주세요 -->
          <foreach collection="typeToArray" item="type">
             <trim prefix="OR">
+            <!-- trim prefix= "OR" 앞에 무조건 or을 붙여라  -->
                <choose>
                   <when test="type == 't'.toString()">
                      title like concat('%',#{keyword},'%')
